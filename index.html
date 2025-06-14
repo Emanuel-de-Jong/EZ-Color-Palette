@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gosuji Colors</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #6b6b6b;
+        }
+
+        .palette-row {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .color-title {
+            width: 150px;
+            font-size: 24px;
+            font-weight: bold;
+            margin-left: 50px;
+        }
+
+        .color {
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            width: 100px;
+            height: 100px;
+            margin: 0 10px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 5px;
+            border: 2px solid #000;
+        }
+
+        .color:hover {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="color-palette">
+        <div class="palette-row">
+            <div class="color-title"></div>
+            <div class="color"></div>
+            <div class="color"></div>
+            <div class="color"></div>
+            <div class="color"></div>
+            <div class="color"></div>
+            <div class="color"></div>
+        </div>
+        <div class="palette-row">
+            <div class="color-title"></div>
+            <div class="color"></div>
+            <div class="color"></div>
+            <div class="color"></div>
+            <div class="color"></div>
+            <div class="color"></div>
+            <div class="color"></div>
+        </div>
+    </div>
+    
+    <script>
+        const COLORS = {
+            "Primary": "#0000ff",
+            "Neutral": "#aaaaaa",
+            "Danger": "#ff0000",
+            "Warn": "#ffff00",
+            "Success": "#00ff00",
+        };
+
+        document.querySelectorAll('.color').forEach(div => {
+            const color = div.textContent.trim();
+            div.style.backgroundColor = color;
+
+            if (color.toLowerCase() === '#000000') {
+                div.style.color = '#fff';
+            } else if (color.toLowerCase() === '#ffffff' || color.toLowerCase() === '#f0f0f0') {
+                div.style.color = '#000';
+            }
+            
+            div.addEventListener('click', () => {
+                const color = div.textContent.trim();
+                navigator.clipboard.writeText(color);
+
+                const originalBg = div.style.backgroundColor;
+                const originalText = div.textContent;
+                div.style.backgroundColor = '#1aed13';
+                div.textContent = 'Copied';
+                setTimeout(() => {
+                    div.style.backgroundColor = originalBg;
+                    div.textContent = originalText;
+                }, 350);
+            });
+        });
+    </script>
+</body>
+</html>
