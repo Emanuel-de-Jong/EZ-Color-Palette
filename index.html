@@ -39,53 +39,16 @@
     <div class="color-palette"></div>
     <script>
         const COLORS = {
-            "Primary": "#0000ff",
-            "Neutral": "#aaaaaa",
-            "Danger": "#ff0000",
-            "Warn": "#ffff00",
-            "Success": "#00ff00",
+            Primary: ["#4444ff", "#3333ff", "#2222ff", "#1111ff", "#0000ee", "#0000dd", "#0000cc"],
+            Neutral: ["#4444ff", "#3333ff", "#2222ff", "#1111ff", "#0000ee", "#0000dd", "#0000cc"],
+            Danger:  ["#4444ff", "#3333ff", "#2222ff", "#1111ff", "#0000ee", "#0000dd", "#0000cc"],
+            Warn:    ["#4444ff", "#3333ff", "#2222ff", "#1111ff", "#0000ee", "#0000dd", "#0000cc"],
+            Success: ["#4444ff", "#3333ff", "#2222ff", "#1111ff", "#0000ee", "#0000dd", "#0000cc"],
         };
-
-        const COLOR_VARIANCE_DIFFERENCE = 0.5; // between 0.1 and 1.0
-
-        function hexToRgb(hex) {
-            let h = hex.replace('#','');
-            if (h.length === 3) {
-                h = h.split('').map(c => c+c).join('');
-            }
-
-            let bigint = parseInt(h, 16);
-            return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
-        }
-
-        function rgbToHex(r, g, b) {
-            const toHex = c => c.toString(16).padStart(2, '0');
-            return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
-        }
-
-        function adjustColor(hex, percentage) {
-            const {r, g, b} = hexToRgb(hex);
-
-            let nr, ng, nb;
-            if (percentage < 0) {
-                const factor = 1 + percentage/100;
-                nr = r * factor; ng = g * factor; nb = b * factor;
-            } else {
-                nr = r + (255 - r) * percentage/100;
-                ng = g + (255 - g) * percentage/100;
-                nb = b + (255 - b) * percentage/100;
-            }
-
-            return rgbToHex(
-                Math.round(Math.min(255, Math.max(0, nr))),
-                Math.round(Math.min(255, Math.max(0, ng))),
-                Math.round(Math.min(255, Math.max(0, nb)))
-            );
-        }
 
         const container = document.querySelector('.color-palette');
 
-        Object.entries(COLORS).forEach(([name, baseHex]) => {
+        Object.entries(COLORS).forEach(([name, shades]) => {
             const row = document.createElement('div');
             row.className = 'palette-row';
 
@@ -94,36 +57,25 @@
             title.textContent = name;
             row.appendChild(title);
 
-            let adjustedVariance = Math.min(1, Math.max(0.1, COLOR_VARIANCE_DIFFERENCE));
-            adjustedVariance *= 3.0;
-
-            for (let shadeIndex = -3; shadeIndex <= 3; shadeIndex++) {
+            shades.forEach(hex => {
                 const colorDiv = document.createElement('div');
                 colorDiv.className = 'color';
-
-                const adjustmentPct = shadeIndex * 10 * adjustedVariance;
-                const shadeHex = adjustColor(baseHex, adjustmentPct);
-
-                colorDiv.style.backgroundColor = shadeHex;
-                colorDiv.style.color = shadeIndex < 0 ? '#fff' : '#000';
-                colorDiv.textContent = shadeHex;
+                colorDiv.style.backgroundColor = hex;
+                colorDiv.textContent = hex;
                 colorDiv.addEventListener('click', () => {
-                    navigator.clipboard.writeText(shadeHex);
-
-                    const originalText = colorDiv.textContent;
+                    navigator.clipboard.writeText(hex);
+                    const original = hex;
                     colorDiv.textContent = 'Copied';
                     colorDiv.style.backgroundColor = '#1aed13';
                     colorDiv.style.color = '#000';
-
                     setTimeout(() => {
-                        colorDiv.textContent = originalText;
-                        colorDiv.style.backgroundColor = shadeHex;
-                        colorDiv.style.color = shadeIndex < 0 ? '#fff' : '#000';
+                        colorDiv.textContent = original;
+                        colorDiv.style.backgroundColor = hex;
+                        colorDiv.style.color = '';
                     }, 350);
                 });
-
                 row.appendChild(colorDiv);
-            }
+            });
 
             container.appendChild(row);
         });
