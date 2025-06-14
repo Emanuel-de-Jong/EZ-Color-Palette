@@ -1,33 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gosuji Colors</title>
-
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #6b6b6b;
+            background-color: #bcbcbc;
         }
-
         .palette-row {
             display: flex;
-            justify-content: flex-start;
             align-items: center;
             margin: 20px 0;
         }
-
         .color-title {
             width: 150px;
             font-size: 24px;
             font-weight: bold;
             margin-left: 50px;
         }
-
         .color {
             display: flex;
-            justify-content: space-evenly;
+            justify-content: center;
             align-items: center;
             width: 100px;
             height: 100px;
@@ -36,35 +31,12 @@
             font-weight: bold;
             border-radius: 5px;
             border: 2px solid #000;
-        }
-
-        .color:hover {
             cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <div class="color-palette">
-        <div class="palette-row">
-            <div class="color-title"></div>
-            <div class="color"></div>
-            <div class="color"></div>
-            <div class="color"></div>
-            <div class="color"></div>
-            <div class="color"></div>
-            <div class="color"></div>
-        </div>
-        <div class="palette-row">
-            <div class="color-title"></div>
-            <div class="color"></div>
-            <div class="color"></div>
-            <div class="color"></div>
-            <div class="color"></div>
-            <div class="color"></div>
-            <div class="color"></div>
-        </div>
-    </div>
-    
+    <div class="color-palette"></div>
     <script>
         const COLORS = {
             "Primary": "#0000ff",
@@ -74,29 +46,87 @@
             "Success": "#00ff00",
         };
 
-        document.querySelectorAll('.color').forEach(div => {
-            const color = div.textContent.trim();
-            div.style.backgroundColor = color;
+        function hexToRgb(hex) {
+            let h = hex.replace('#','');
+            if (h.length === 3) {
+                h = h.split('').map(c => c+c).join('');
+            }
 
-            if (color.toLowerCase() === '#000000') {
-                div.style.color = '#fff';
-            } else if (color.toLowerCase() === '#ffffff' || color.toLowerCase() === '#f0f0f0') {
-                div.style.color = '#000';
+            let bigint = parseInt(h, 16);
+            return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
+        }
+
+        function rgbToHex(r, g, b) {
+            const toHex = c => c.toString(16).padStart(2, '0');
+            return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+        }
+
+        function adjust(col, pct) {
+            const {r, g, b} = hexToRgb(col);
+
+            let nr, ng, nb;
+            if (pct < 0) {
+                const factor = 1 + pct/100;
+                nr = r * factor; ng = g * factor; nb = b * factor;
+            } else {
+                nr = r + (255 - r) * pct/100;
+                ng = g + (255 - g) * pct/100;
+                nb = b + (255 - b) * pct/100;
             }
             
-            div.addEventListener('click', () => {
-                const color = div.textContent.trim();
-                navigator.clipboard.writeText(color);
+            return rgbToHex(
+                Math.round(Math.min(255, Math.max(0, nr))),
+                Math.round(Math.min(255, Math.max(0, ng))),
+                Math.round(Math.min(255, Math.max(0, nb)))
+            );
+        }
 
-                const originalBg = div.style.backgroundColor;
-                const originalText = div.textContent;
-                div.style.backgroundColor = '#1aed13';
-                div.textContent = 'Copied';
-                setTimeout(() => {
-                    div.style.backgroundColor = originalBg;
-                    div.textContent = originalText;
-                }, 350);
-            });
+        function textColor(hex) {
+            const {r, g, b} = hexToRgb(hex);
+            const lum = 0.299*r + 0.587*g + 0.114*b;
+            return lum < 128 ? '#fff' : '#000';
+        }
+
+        const container = document.querySelector('.color-palette');
+
+        Object.entries(COLORS).forEach(([name, hex]) => {
+            const row = document.createElement('div');
+            row.className = 'palette-row';
+
+            const title = document.createElement('div');
+            title.className = 'color-title';
+            title.textContent = name;
+
+            row.appendChild(title);
+
+            for (let i = -3; i <= 3; i++) {
+                const d = document.createElement('div');
+                d.className = 'color';
+
+                const shade = adjust(hex, i * 10);
+                d.style.backgroundColor = shade;
+                d.style.color = textColor(shade);
+                d.textContent = shade;
+                d.addEventListener('click', () => {
+                    navigator.clipboard.writeText(shade);
+
+                    const orig = d.textContent;
+
+                    d.textContent = 'Copied';
+                    d.style.backgroundColor = '#1aed13';
+                    d.style.color = '#000';
+
+                    setTimeout(() => {
+                        d.textContent = orig;
+                        d.style.backgroundColor = shade;
+                        d.style.color = textColor(shade);
+                    }, 350);
+                });
+                row.appendChild(d);
+
+            }
+
+            container.appendChild(row);
         });
     </script>
 </body>
