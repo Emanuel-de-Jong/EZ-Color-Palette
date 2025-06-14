@@ -63,19 +63,19 @@
             return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
         }
 
-        function adjust(col, pct) {
-            const {r, g, b} = hexToRgb(col);
+        function adjustColor(hex, percentage) {
+            const {r, g, b} = hexToRgb(hex);
 
             let nr, ng, nb;
-            if (pct < 0) {
-                const factor = 1 + pct/100;
+            if (percentage < 0) {
+                const factor = 1 + percentage/100;
                 nr = r * factor; ng = g * factor; nb = b * factor;
             } else {
-                nr = r + (255 - r) * pct/100;
-                ng = g + (255 - g) * pct/100;
-                nb = b + (255 - b) * pct/100;
+                nr = r + (255 - r) * percentage/100;
+                ng = g + (255 - g) * percentage/100;
+                nb = b + (255 - b) * percentage/100;
             }
-            
+
             return rgbToHex(
                 Math.round(Math.min(255, Math.max(0, nr))),
                 Math.round(Math.min(255, Math.max(0, ng))),
@@ -85,44 +85,44 @@
 
         const container = document.querySelector('.color-palette');
 
-        Object.entries(COLORS).forEach(([name, hex]) => {
+        Object.entries(COLORS).forEach(([name, baseHex]) => {
             const row = document.createElement('div');
             row.className = 'palette-row';
 
             const title = document.createElement('div');
             title.className = 'color-title';
             title.textContent = name;
-
             row.appendChild(title);
 
-            for (let offsetIndex = -3; offsetIndex <= 3; offsetIndex++) {
+            let adjustedVariance = Math.min(1, Math.max(0.1, COLOR_VARIANCE_DIFFERENCE));
+            adjustedVariance *= 3.0;
+
+            for (let shadeIndex = -3; shadeIndex <= 3; shadeIndex++) {
                 const colorDiv = document.createElement('div');
                 colorDiv.className = 'color';
 
-                const adjustmentPercentage = offsetIndex * 10 * Math.min(1, Math.max(0.1, COLOR_VARIANCE_DIFFERENCE));
-                const shade = adjust(hex, adjustmentPercentage);
+                const adjustmentPct = shadeIndex * 10 * adjustedVariance;
+                const shadeHex = adjustColor(baseHex, adjustmentPct);
 
-                colorDiv.style.backgroundColor = shade;
-                colorDiv.style.color = offsetIndex < 0 ? '#fff' : '#000';
-                colorDiv.textContent = shade;
+                colorDiv.style.backgroundColor = shadeHex;
+                colorDiv.style.color = shadeIndex < 0 ? '#fff' : '#000';
+                colorDiv.textContent = shadeHex;
                 colorDiv.addEventListener('click', () => {
-                    navigator.clipboard.writeText(shade);
+                    navigator.clipboard.writeText(shadeHex);
 
                     const originalText = colorDiv.textContent;
-
                     colorDiv.textContent = 'Copied';
                     colorDiv.style.backgroundColor = '#1aed13';
                     colorDiv.style.color = '#000';
 
                     setTimeout(() => {
                         colorDiv.textContent = originalText;
-                        colorDiv.style.backgroundColor = shade;
-                        colorDiv.style.color = offsetIndex < 0 ? '#fff' : '#000';
+                        colorDiv.style.backgroundColor = shadeHex;
+                        colorDiv.style.color = shadeIndex < 0 ? '#fff' : '#000';
                     }, 350);
                 });
 
                 row.appendChild(colorDiv);
-
             }
 
             container.appendChild(row);
