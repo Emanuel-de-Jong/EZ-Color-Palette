@@ -26,10 +26,9 @@
             align-items: center;
             width: 100px;
             height: 100px;
-            margin: 0 10px;
+            margin: 0;
             font-size: 20px;
             font-weight: bold;
-            border-radius: 5px;
             cursor: pointer;
         }
     </style>
@@ -44,31 +43,34 @@
                 "#a370f7","#c29ffa","#e0cffc"
             ],
             Neutral: [
-                "#212529","#343a40","#495057","#6c757d","#adb5bd",
+                "#212529","#343a40","#495057","#6c757d",
+                "#adb5bd",
                 "#ced4da",
                 "#dee2e6","#e9ecef","#f8f9fa"
             ],
             Danger: [
-                "#2c0b0e","#58151c","#842029","#b02a37","#dc3545",
+                "#2c0b0e","#58151c","#842029","#b02a37",
+                "#dc3545",
                 "#e35d6a",
                 "#ea868f","#f1aeb5","#f8d7da"
             ],
             Warn: [
-                "#332701","#664d03","#997404","#cc9a06","#ffc107",
+                "#332701","#664d03","#997404","#cc9a06",
+                "#ffc107",
                 "#ffcd39",
                 "#ffda6a","#ffe69c","#fff3cd"
             ],
             Success: [
-                "#051b11","#0a3622","#0f5132","#146c43","#198754",
+                "#051b11","#0a3622","#0f5132","#146c43",
+                "#198754",
                 "#479f76",
                 "#75b798","#a3cfbb","#d1e7dd"
             ]
         };
 
         const MAIN_COLOR_INDEX = 5;
-
-        const BORDER_COLOR_LEFT = '#f0f0f0';
-        const BORDER_COLOR_RIGHT = '#222222';
+        const BORDER_COLOR_LEFT = '#f2f2f2';
+        const BORDER_COLOR_RIGHT = '#111';
         const BORDER_COLOR_MAIN = '#22ff22';
 
         const container = document.querySelector('.color-palette');
@@ -86,23 +88,28 @@
                 const colorDiv = document.createElement('div');
                 colorDiv.className = 'color';
                 colorDiv.style.backgroundColor = hex;
-                const color = i < MAIN_COLOR_INDEX ? BORDER_COLOR_LEFT : BORDER_COLOR_RIGHT;
-                colorDiv.style.color = color;
-                const borderColor = i === MAIN_COLOR_INDEX ? BORDER_COLOR_MAIN : i < MAIN_COLOR_INDEX ? BORDER_COLOR_LEFT : BORDER_COLOR_RIGHT;
-                colorDiv.style.border = `5px solid ${borderColor}`;
+                colorDiv.style.color = i <= MAIN_COLOR_INDEX - 1 ? BORDER_COLOR_LEFT : BORDER_COLOR_RIGHT;
+                colorDiv.style.margin = '0';
+                const borderCol = i === MAIN_COLOR_INDEX ? BORDER_COLOR_MAIN : i <= MAIN_COLOR_INDEX - 1 ? BORDER_COLOR_LEFT : BORDER_COLOR_RIGHT;
+                colorDiv.style.borderTop = `5px solid ${borderCol}`;
+                colorDiv.style.borderBottom = `5px solid ${borderCol}`;
+                colorDiv.style.borderLeft  = i === 0 ? `5px solid ${borderCol}` : 'none';
+                colorDiv.style.borderRight = i === shades.length - 1 ? `5px solid ${borderCol}` : 'none';
                 colorDiv.textContent = hex;
+
                 colorDiv.addEventListener('click', () => {
                     navigator.clipboard.writeText(hex);
-                    const originalText = hex;
+                    const original = hex;
                     colorDiv.textContent = 'Copied';
                     colorDiv.style.backgroundColor = BORDER_COLOR_MAIN;
                     colorDiv.style.color = '#000';
                     setTimeout(() => {
-                        colorDiv.textContent = originalText;
+                        colorDiv.textContent = original;
                         colorDiv.style.backgroundColor = hex;
-                        colorDiv.style.color = i <= 4 ? '#f2f2f2' : '#111';
+                        colorDiv.style.color = i <= MAIN_COLOR_INDEX - 1 ? BORDER_COLOR_LEFT : BORDER_COLOR_RIGHT;
                     }, 350);
                 });
+
                 row.appendChild(colorDiv);
             });
 
