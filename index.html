@@ -65,6 +65,8 @@
             ]
         };
 
+        const MAIN_COLOR_INDEX = 5;
+
         const BORDER_COLOR_LEFT = '#f0f0f0';
         const BORDER_COLOR_RIGHT = '#222222';
         const BORDER_COLOR_MAIN = '#22ff22';
@@ -84,8 +86,10 @@
                 const colorDiv = document.createElement('div');
                 colorDiv.className = 'color';
                 colorDiv.style.backgroundColor = hex;
-                colorDiv.style.color = i <= 4 ? BORDER_COLOR_LEFT : BORDER_COLOR_RIGHT;
-                colorDiv.style.border = `5px solid ${i === 5 ? BORDER_COLOR_MAIN : i <= 4 ? BORDER_COLOR_LEFT : BORDER_COLOR_RIGHT}`;
+                const color = i < MAIN_COLOR_INDEX ? BORDER_COLOR_LEFT : BORDER_COLOR_RIGHT;
+                colorDiv.style.color = color;
+                const borderColor = i === MAIN_COLOR_INDEX ? BORDER_COLOR_MAIN : i < MAIN_COLOR_INDEX ? BORDER_COLOR_LEFT : BORDER_COLOR_RIGHT;
+                colorDiv.style.border = `5px solid ${borderColor}`;
                 colorDiv.textContent = hex;
                 colorDiv.addEventListener('click', () => {
                     navigator.clipboard.writeText(hex);
