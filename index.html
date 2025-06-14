@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #bcbcbc;
+            background-color: #9a9a9a;
         }
         .palette-row {
             display: flex;
@@ -30,7 +30,6 @@
             font-size: 20px;
             font-weight: bold;
             border-radius: 5px;
-            border: 5px solid #000;
             cursor: pointer;
         }
     </style>
@@ -39,12 +38,36 @@
     <div class="color-palette"></div>
     <script>
         const COLORS = {
-            Primary: ["#4444ff", "#3333ff", "#2222ff", "#1111ff", "#0000ee", "#0000dd", "#0000cc"],
-            Neutral: ["#4444ff", "#3333ff", "#2222ff", "#1111ff", "#0000ee", "#0000dd", "#0000cc"],
-            Danger:  ["#4444ff", "#3333ff", "#2222ff", "#1111ff", "#0000ee", "#0000dd", "#0000cc"],
-            Warn:    ["#4444ff", "#3333ff", "#2222ff", "#1111ff", "#0000ee", "#0000dd", "#0000cc"],
-            Success: ["#4444ff", "#3333ff", "#2222ff", "#1111ff", "#0000ee", "#0000dd", "#0000cc"],
+            Primary: [
+                "#140330","#290661","#3d0a91","#520dc2","#6610f2",
+                "#8540f5",
+                "#a370f7","#c29ffa","#e0cffc"
+            ],
+            Neutral: [
+                "#212529","#343a40","#495057","#6c757d","#adb5bd",
+                "#ced4da",
+                "#dee2e6","#e9ecef","#f8f9fa"
+            ],
+            Danger: [
+                "#2c0b0e","#58151c","#842029","#b02a37","#dc3545",
+                "#e35d6a",
+                "#ea868f","#f1aeb5","#f8d7da"
+            ],
+            Warn: [
+                "#332701","#664d03","#997404","#cc9a06","#ffc107",
+                "#ffcd39",
+                "#ffda6a","#ffe69c","#fff3cd"
+            ],
+            Success: [
+                "#051b11","#0a3622","#0f5132","#146c43","#198754",
+                "#479f76",
+                "#75b798","#a3cfbb","#d1e7dd"
+            ]
         };
+
+        const BORDER_COLOR_LEFT = '#f0f0f0';
+        const BORDER_COLOR_RIGHT = '#222222';
+        const BORDER_COLOR_MAIN = '#22ff22';
 
         const container = document.querySelector('.color-palette');
 
@@ -57,21 +80,23 @@
             title.textContent = name;
             row.appendChild(title);
 
-            shades.forEach(hex => {
+            shades.forEach((hex, i) => {
                 const colorDiv = document.createElement('div');
                 colorDiv.className = 'color';
                 colorDiv.style.backgroundColor = hex;
+                colorDiv.style.color = i <= 4 ? BORDER_COLOR_LEFT : BORDER_COLOR_RIGHT;
+                colorDiv.style.border = `5px solid ${i === 5 ? BORDER_COLOR_MAIN : i <= 4 ? BORDER_COLOR_LEFT : BORDER_COLOR_RIGHT}`;
                 colorDiv.textContent = hex;
                 colorDiv.addEventListener('click', () => {
                     navigator.clipboard.writeText(hex);
-                    const original = hex;
+                    const originalText = hex;
                     colorDiv.textContent = 'Copied';
-                    colorDiv.style.backgroundColor = '#1aed13';
+                    colorDiv.style.backgroundColor = BORDER_COLOR_MAIN;
                     colorDiv.style.color = '#000';
                     setTimeout(() => {
-                        colorDiv.textContent = original;
+                        colorDiv.textContent = originalText;
                         colorDiv.style.backgroundColor = hex;
-                        colorDiv.style.color = '';
+                        colorDiv.style.color = i <= 4 ? '#f2f2f2' : '#111';
                     }, 350);
                 });
                 row.appendChild(colorDiv);
