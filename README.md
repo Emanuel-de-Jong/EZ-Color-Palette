@@ -1,1 +1,1 @@
-# Gosuji-Colors
+# EZ Color Palette
