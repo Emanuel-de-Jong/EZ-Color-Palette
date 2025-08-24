@@ -8,4 +8,4 @@ I made this because no free existing option I found let me have multiple palette
 
 | | |
 | :---: | :---: |
-| ![](/Screenshots/.png) | ![](/Screenshots/.png) |
+| ![](/Screenshots/1-Page.png) | ![](/Screenshots/.png) |
